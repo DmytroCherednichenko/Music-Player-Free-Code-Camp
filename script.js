@@ -236,9 +236,33 @@ const deleteSong = (id) => {
     if (userData?.songs.length === 0) {
       const resetButton = document.createElement("button");
       const resetText = document.createTextNode("Reset Playlist");
+      resetButton.id = "reset";
+      resetButton.ariaLabel = "Reset playlist";
+      playlistSongs.appendChild(resetButton);
+      resetButton.appendChild(resetText);
     }
   }
 
 };
 
+resetButton.addEventListener("click", () => {
+  userData.songs = [...allSongs];
+  renderSongs(sortSongs());
+  setPlayButtonAccessibleText();
+  resetButton.remove();
+});
 
+audio.addEventListener("ended", () => {
+  const currentSongIndex = getCurrentSongIndex();
+  const nextSongExists = userData?.songs[currentSongIndex + 1] !== undefined;
+  if (nextSongExists) {
+    playNextSong()
+  } else {
+    userData.currentSong = null;
+    userData.songCurrentTime = 0;
+  };
+  pauseSong();
+  setPlayerDisplay();
+  highlightCurrentSong();
+  setPlayButtonAccessibleText();
+});
